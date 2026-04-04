@@ -4,11 +4,12 @@ import Types
 import TaskOperations
 import Filters
 import Reports
+import Persistence
 
 import System.IO (hFlush, stdout)
 
 ------------------------------------------------------------
--- Funksione ndihmëse për input
+-- Input helper
 ------------------------------------------------------------
 
 prompt :: String -> IO String
@@ -37,7 +38,7 @@ printList lista =
     mapM_ printTask lista
 
 ------------------------------------------------------------
--- Funksionet e menysë
+-- Menu
 ------------------------------------------------------------
 
 menu :: TaskList -> IO ()
@@ -50,6 +51,7 @@ menu lista = do
     putStrLn "5. Filtra & Kerkime"
     putStrLn "6. Raporte"
     putStrLn "0. Dil"
+
     choice <- prompt "Zgjedhja:"
     handleChoice choice lista
 
@@ -78,8 +80,10 @@ handleChoice "6" lista = do
     cliRaporte lista
     menu lista
 
-handleChoice "0" _ = do
-    putStrLn "Dalje..."
+-- Dalje + ruajtje
+handleChoice "0" lista = do
+    saveTasks "tasks.db" lista
+    putStrLn "Detyrat u ruajten. Dalje..."
     return ()
 
 handleChoice _ lista = do
@@ -87,7 +91,7 @@ handleChoice _ lista = do
     menu lista
 
 ------------------------------------------------------------
--- Implementimet e komandave CLI
+-- SHTO DETYRË
 ------------------------------------------------------------
 
 cliShtoDetyre :: TaskList -> IO TaskList
@@ -119,6 +123,8 @@ cliShtoDetyre lista = do
     return (shtoDetyre lista t)
 
 ------------------------------------------------------------
+-- HIQ DETYRË
+------------------------------------------------------------
 
 cliHiq :: TaskList -> IO TaskList
 cliHiq lista = do
@@ -127,6 +133,8 @@ cliHiq lista = do
     putStrLn "Detyra u hoq (nese ekzistonte)."
     return lista'
 
+------------------------------------------------------------
+-- NDRYSHO STATUS
 ------------------------------------------------------------
 
 cliNdrysho :: TaskList -> IO TaskList
@@ -144,12 +152,12 @@ cliNdrysho lista = do
     return lista'
 
 ------------------------------------------------------------
--- Filtra
+-- FILTRA & KËRKIME
 ------------------------------------------------------------
 
 cliFiltra :: TaskList -> IO ()
 cliFiltra lista = do
-    putStrLn "\n--- Filtra & Kërkime ---"
+    putStrLn "\n--- Filtra & Kerkime ---"
     putStrLn "1. Filtra sipas prioritetit"
     putStrLn "2. Filtra sipas statusit"
     putStrLn "3. Kerkim me fjale"
@@ -188,7 +196,7 @@ cliFiltra lista = do
         _ -> putStrLn "Zgjedhje e pasakte!"
 
 ------------------------------------------------------------
--- Raporte
+-- RAPORTE
 ------------------------------------------------------------
 
 cliRaporte :: TaskList -> IO ()
@@ -209,8 +217,11 @@ cliRaporte lista = do
         _ -> putStrLn "Zgjedhje e pasakte!"
 
 ------------------------------------------------------------
+-- MAIN: Ngarkimi fillestar nga file
+------------------------------------------------------------
 
 main :: IO ()
 main = do
     putStrLn "Sistemi u startua!"
-    menu []
+    lista <- loadTasks "tasks.db"   -- ngarkim automatik
+    menu lista
