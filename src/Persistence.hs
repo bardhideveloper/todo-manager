@@ -1,27 +1,29 @@
 module Persistence
-  ( saveTasks,
-    loadTasks,
-  )
-where
+  ( saveTasks
+  , loadTasks
+  ) where
 
-import System.Directory (doesFileExist)
 import Types
+import System.Directory (doesFileExist)
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as BC
 
--- | Save the current TaskList to a file.
+-- | Save the TaskList strictly to avoid file locks on Windows.
 saveTasks :: FilePath -> TaskList -> IO ()
 saveTasks file lista = do
-  writeFile file (show lista)
-  putStrLn "Detyrat u ruajten me sukses!"
+    let content = show lista
+    B.writeFile file (BC.pack content)
+    putStrLn "Detyrat u ruajten me sukses!"
 
--- | Load TaskList back from a file.
--- If the file does not exist or is empty, return an empty list.
+-- | Load TaskList strictly using ByteString to avoid lazy file locking.
 loadTasks :: FilePath -> IO TaskList
 loadTasks file = do
-  exists <- doesFileExist file
-  if not exists
-    then return []
-    else do
-      content <- readFile file
-      if null content
-        then return []
-        else return (read content :: TaskList)
+    exists <- doesFileExist file
+    if not exists
+       then return []
+       else do
+           bytes <- B.readFile file
+           let content = BC.unpack bytes
+           if null content
+               then return []
+               else return (read content :: TaskList)

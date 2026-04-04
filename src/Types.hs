@@ -1,29 +1,36 @@
-module Types
-  ( Priority (..),
-    Status (..),
-    Task (..),
-    TaskList,
-  )
-where
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
--- | Represents the priority level of a task.
-data Priority = Low | Medium | High
-  deriving (Show, Read, Eq, Ord)
+-- | Core data types for the To‑Do Manager system.
+module Types 
+  ( Priority(..)
+  , Status(..)
+  , Task(..)
+  , TaskList
+  ) where
 
--- | Represents whether a task is completed or still pending.
-data Status = Pending | Completed
-  deriving (Show, Read, Eq)
+import GHC.Generics (Generic)
+import Data.Aeson   (ToJSON, FromJSON)
 
--- | A single task in the system.
+data Priority
+  = Low
+  | Medium
+  | High
+  deriving (Show, Read, Eq, Ord, Generic, ToJSON, FromJSON)
+
+data Status
+  = Pending
+  | Completed
+  deriving (Show, Read, Eq, Generic, ToJSON, FromJSON)
+
 data Task = Task
-  { taskId :: Int,
-    title :: String,
-    description :: String,
-    priority :: Priority,
-    deadline :: Maybe String,
-    status :: Status
+  { taskId      :: Int
+  , title       :: String
+  , description :: String
+  , priority    :: Priority
+  , deadline    :: Maybe String
+  , status      :: Status
   }
-  deriving (Show, Read, Eq)
+  deriving (Show, Read, Eq, Generic, ToJSON, FromJSON)
 
--- | Our task list as an immutable list of tasks.
 type TaskList = [Task]

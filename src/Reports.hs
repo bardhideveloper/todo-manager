@@ -1,3 +1,5 @@
+-- | This module defines functional reports derived from TaskList,
+-- using compositions of filters to create declarative data pipelines.
 module Reports
   ( raportoDetyratUrgjente,
     raportoDetyratPaAfat,
@@ -8,18 +10,17 @@ where
 import Filters
 import Types
 
--- | Reports all tasks that are high priority AND still pending.
--- Demonstrates composition of pure filters.
+-- | Tasks that are High priority AND still Pending.
 raportoDetyratUrgjente :: TaskList -> TaskList
 raportoDetyratUrgjente =
   (filtroSipasPrioritetit High . filtroSipasStatusit Pending)
 
--- | Reports tasks that have no deadline (deadline = Nothing).
+-- | Tasks that have no assigned deadline.
 raportoDetyratPaAfat :: TaskList -> TaskList
 raportoDetyratPaAfat =
   filter (\t -> deadline t == Nothing)
 
--- | Reports tasks that DO have a deadline.
+-- | Tasks with a defined deadline.
 raportoDetyratMeDeadline :: TaskList -> TaskList
 raportoDetyratMeDeadline =
   filter (\t -> deadline t /= Nothing)

@@ -1,3 +1,5 @@
+-- | This module provides higher‑order filtering operations
+-- over immutable TaskList structures.
 module Filters
   ( filtroSipasPrioritetit,
     filtroSipasStatusit,
@@ -10,17 +12,17 @@ where
 import Data.List (sortOn)
 import Types
 
--- | Filters tasks by a given priority.
+-- | Return only tasks with the given priority.
 filtroSipasPrioritetit :: Priority -> TaskList -> TaskList
 filtroSipasPrioritetit p =
   filter (\t -> priority t == p)
 
--- | Filters tasks based on their status (Pending / Completed).
+-- | Return tasks that match the given status (Pending or Completed).
 filtroSipasStatusit :: Status -> TaskList -> TaskList
 filtroSipasStatusit s =
   filter (\t -> status t == s)
 
--- | Searches for tasks containing a given keyword in title or description.
+-- | Search for tasks whose title or description contains a given word.
 kerkoDetyre :: String -> TaskList -> TaskList
 kerkoDetyre keyword =
   filter
@@ -29,13 +31,13 @@ kerkoDetyre keyword =
          in keyword `elem` words txt
     )
 
--- | Sorts tasks from highest to lowest priority.
+-- | Sort tasks by priority from highest to lowest.
 renditSipasPrioritetit :: TaskList -> TaskList
 renditSipasPrioritetit =
   reverse . sortOn priority
 
--- | Composes multiple filter functions into a single pipeline.
--- This demonstrates higher-order function usage.
+-- | Compose multiple filter functions into one.
+-- Demonstrates higher‑order function composition.
 kompozoFiltra :: [TaskList -> TaskList] -> TaskList -> TaskList
 kompozoFiltra funs lista =
   foldl (\acc f -> f acc) lista funs
