@@ -19,7 +19,7 @@ library
     import:           warnings
     exposed-modules:  Types TaskOperations Filters Reports Persistence
     -- other-modules:
-    build-depends:    base >=4.18.3.0
+    build-depends:    base >=4.18.3.0, directory
     hs-source-dirs:   src
     default-language: Haskell2010
 
@@ -30,7 +30,7 @@ executable todo-manager
     -- other-extensions:
     build-depends:
         base ^>=4.18.3.0,
-        todo-manager
-
+        todo-manager,
+        directory
     hs-source-dirs:   app
     default-language: Haskell2010

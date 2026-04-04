@@ -1,13 +1,14 @@
 module Filters
-  ( filtroSipasPrioritetit
-  , filtroSipasStatusit
-  , kerkoDetyre
-  , renditSipasPrioritetit
-  , kompozoFiltra
-  ) where
+  ( filtroSipasPrioritetit,
+    filtroSipasStatusit,
+    kerkoDetyre,
+    renditSipasPrioritetit,
+    kompozoFiltra,
+  )
+where
 
-import Types
 import Data.List (sortOn)
+import Types
 
 -- | Filters tasks by a given priority.
 filtroSipasPrioritetit :: Priority -> TaskList -> TaskList
@@ -22,9 +23,11 @@ filtroSipasStatusit s =
 -- | Searches for tasks containing a given keyword in title or description.
 kerkoDetyre :: String -> TaskList -> TaskList
 kerkoDetyre keyword =
-  filter (\t ->
-      let txt = title t ++ " " ++ description t
-      in keyword `elem` words txt )
+  filter
+    ( \t ->
+        let txt = title t ++ " " ++ description t
+         in keyword `elem` words txt
+    )
 
 -- | Sorts tasks from highest to lowest priority.
 renditSipasPrioritetit :: TaskList -> TaskList

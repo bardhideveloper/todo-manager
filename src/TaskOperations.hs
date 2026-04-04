@@ -1,8 +1,9 @@
 module TaskOperations
-  ( shtoDetyre
-  , hiqDetyre
-  , ndryshoStatusin
-  ) where
+  ( shtoDetyre,
+    hiqDetyre,
+    ndryshoStatusin,
+  )
+where
 
 import Types
 
@@ -18,7 +19,10 @@ hiqDetyre lista taskIdToRemove =
 -- | Updates the status of a task with the given ID.
 ndryshoStatusin :: TaskList -> Int -> Status -> TaskList
 ndryshoStatusin lista taskIdToUpdate statusRi =
-  map (\t -> if taskId t == taskIdToUpdate
-             then t { status = statusRi }
-             else t)
-      lista
+  map
+    ( \t ->
+        if taskId t == taskIdToUpdate
+          then t {status = statusRi}
+          else t
+    )
+    lista
