@@ -8,6 +8,7 @@ import TaskOperations
 import Types
 import Validation
 import JsonExport
+import DSL
 
 ------------------------------------------------------------
 -- Input helper
@@ -53,6 +54,7 @@ menu lista = do
   putStrLn "6. Raporte"
   putStrLn "7. Eksporto detyrat ne JSON"
   putStrLn "8. Importo detyrat nga JSON"
+  putStrLn "9. Ekzekuto DSL nga file"
   putStrLn "0. Dil"
 
   choice <- prompt "Zgjedhja:"
@@ -83,6 +85,11 @@ handleChoice "7" lista = do
 handleChoice "8" lista = do
     lista' <- importFromJson "tasks.json"
     menu lista'
+handleChoice "9" lista = do
+    file <- prompt "Shkruaj emrin e file DSL:"
+    lista' <- runDSLFile file lista
+    menu lista'
+
 
 -- Dalje + ruajtje
 handleChoice "0" lista = do
