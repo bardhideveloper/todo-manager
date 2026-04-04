@@ -86,10 +86,11 @@ handleChoice "8" lista = do
     lista' <- importFromJson "tasks.json"
     menu lista'
 handleChoice "9" lista = do
-    file <- prompt "Shkruaj emrin e file DSL:"
+    file <- prompt "Shkruaj file DSL:"
     lista' <- runDSLFile file lista
+    putStrLn "Gjendja e detyrave pas komandave DSL:"
+    printList lista'
     menu lista'
-
 
 -- Dalje + ruajtje
 handleChoice "0" lista = do

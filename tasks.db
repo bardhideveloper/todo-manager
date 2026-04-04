@@ -1,1 +1,1 @@
-[Task {taskId = 1, title = "Test", description = "Detyre", priority = High, deadline = Just "2026-05-10", status = Completed}]
+[Task {taskId = 3, title = "TestDetyre", description = "Prova", priority = High, deadline = Just "2026-06-01", status = Pending},Task {taskId = 1, title = "Bardh Bablokuuuuuu", description = "Pershkrim i modifikuar", priority = Medium, deadline = Just "2026-09-12", status = Pending}]
