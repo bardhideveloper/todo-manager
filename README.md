@@ -40,3 +40,9 @@ Clono projektin:
 ```bash
 git clone https://github.com/bardhideveloper/todo-manager.git
 cd todo-manager
+
+Ndërto projektin:
+cabal build
+
+Ekzekutimi:
+cabal run
