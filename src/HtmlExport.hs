@@ -1,13 +1,11 @@
 module HtmlExport
-  ( exportHtml
-  ) where
+  ( exportHtml,
+  )
+where
 
 import Types
-import System.IO
 
-------------------------------------------------------------
--- Ndihmës për të krijuar HTML
-------------------------------------------------------------
+-- Helper to create HTML
 
 htmlHeader :: String
 htmlHeader =
@@ -40,34 +38,41 @@ htmlFooter =
   \</body>\n\
   \</html>"
 
-------------------------------------------------------------
--- Një Task → një rresht HTML
-------------------------------------------------------------
+-- One Task → One row HTML
 
 taskToHtml :: Task -> String
 taskToHtml t =
   "<tr>\n"
-  ++ "<td>" ++ show (taskId t) ++ "</td>\n"
-  ++ "<td>" ++ title t ++ "</td>\n"
-  ++ "<td>" ++ description t ++ "</td>\n"
-  ++ "<td>" ++ show (priority t) ++ "</td>\n"
-  ++ "<td>" ++ show (deadline t) ++ "</td>\n"
-  ++ "<td>" ++ show (status t) ++ "</td>\n"
-  ++ "</tr>\n"
+    ++ "<td>"
+    ++ show (taskId t)
+    ++ "</td>\n"
+    ++ "<td>"
+    ++ title t
+    ++ "</td>\n"
+    ++ "<td>"
+    ++ description t
+    ++ "</td>\n"
+    ++ "<td>"
+    ++ show (priority t)
+    ++ "</td>\n"
+    ++ "<td>"
+    ++ show (deadline t)
+    ++ "</td>\n"
+    ++ "<td>"
+    ++ show (status t)
+    ++ "</td>\n"
+    ++ "</tr>\n"
 
-------------------------------------------------------------
--- Lista e detyrave → HTML komplet
-------------------------------------------------------------
+-- List of tasks → HTML komplet
 
 taskListToHtml :: TaskList -> String
 taskListToHtml tasks =
   htmlHeader
-  ++ concatMap taskToHtml tasks
-  ++ htmlFooter
+    ++ concatMap taskToHtml tasks
+    ++ htmlFooter
 
-------------------------------------------------------------
--- Funksioni për eksportim në HTML
-------------------------------------------------------------
+
+-- Function for export in HTML
 
 exportHtml :: FilePath -> TaskList -> IO ()
 exportHtml file tasks = do

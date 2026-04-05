@@ -7,6 +7,7 @@ module DSL
 where
 
 import Data.List (isPrefixOf)
+import Data.Maybe (mapMaybe)
 import Reports
 import TaskOperations
 import Types
@@ -30,7 +31,7 @@ data Command
   deriving (Show, Eq)
 
 ------------------------------------------------------------
--- Helper: Lexon një string të rrethuar me thonjëza
+-- Lexon një string brenda thonjëzave "..."
 ------------------------------------------------------------
 
 parseQuoted :: String -> Maybe (String, String)
@@ -42,8 +43,8 @@ parseQuoted ('"' : xs) = go "" xs
 parseQuoted _ = Nothing
 
 ------------------------------------------------------------
--- Parser për ADD me thonjëza
--- Formati:
+-- Parser për komandën ADD
+-- Format:
 -- ADD <id> "<title>" "<description>" <Priority> "<deadline?>"
 ------------------------------------------------------------
 
@@ -53,26 +54,24 @@ parseAdd input =
     ("ADD" : idStr : rest) ->
       case parseId idStr of
         Nothing -> Nothing
-        Just idVal ->
-          -- Lexo title
+        Just taskIdVal ->
           case parseQuoted (dropWhile (== ' ') (unwords rest)) of
             Nothing -> Nothing
-            Just (title, rest1) ->
-              -- Lexo description
+            Just (titleTxt, rest1) ->
               case parseQuoted rest1 of
                 Nothing -> Nothing
-                Just (desc, rest2) ->
+                Just (descTxt, rest2) ->
                   let ws = words rest2
                    in case ws of
                         (priStr : dlRest) ->
                           case parsePriority priStr of
                             Nothing -> Nothing
-                            Just prVal ->
-                              let deadline =
+                            Just priVal ->
+                              let dlParsed =
                                     case parseQuoted (unwords dlRest) of
                                       Just (d, _) -> Just d
                                       Nothing -> Nothing
-                               in Just (AddCmd idVal title desc prVal deadline)
+                               in Just (AddCmd taskIdVal titleTxt descTxt priVal dlParsed)
                         _ -> Nothing
     _ -> Nothing
 
@@ -84,63 +83,52 @@ parseCommand :: String -> Maybe Command
 parseCommand line
   -- ADD
   | take 4 line == "ADD " = parseAdd line
-  -- DONE ID
-  | "DONE " `elem` [take 5 line] =
+  -- DONE <id>
+  | take 5 line == "DONE " =
       case words line of
         ["DONE", idStr] -> DoneCmd <$> parseId idStr
         _ -> Nothing
-  -- DELETE ID
-  | "DELETE " `elem` [take 7 line] =
+  -- DELETE <id>
+  | take 7 line == "DELETE " =
       case words line of
         ["DELETE", idStr] -> DeleteCmd <$> parseId idStr
         _ -> Nothing
   -- REPORT urgent
   | line == "REPORT urgent" = Just ReportUrgentCmd
-------------------------------------------------------------
--- UPDATE TITLE <id> "New Title"
-------------------------------------------------------------
-parseCommand line
+  -- UPDATE TITLE
   | "UPDATE TITLE " `isPrefixOf` line =
-      case drop (length "UPDATE TITLE ") line of
-        rest ->
-          case words rest of
+      let rest = drop (length "UPDATE TITLE ") line
+       in case words rest of
             (idStr : _) ->
               case parseId idStr of
                 Nothing -> Nothing
-                Just idVal ->
+                Just taskIdVal ->
                   let afterId = drop (length idStr + 1) rest
                    in case parseQuoted afterId of
-                        Just (newTitle, _) -> Just (UpdateTitleCmd idVal newTitle)
+                        Just (newTitle, _) -> Just (UpdateTitleCmd taskIdVal newTitle)
                         Nothing -> Nothing
             _ -> Nothing
-------------------------------------------------------------
--- UPDATE DESCRIPTION <id> "New Description"
-------------------------------------------------------------
-parseCommand line
+  -- UPDATE DESCRIPTION
   | "UPDATE DESCRIPTION " `isPrefixOf` line =
-      case drop (length "UPDATE DESCRIPTION ") line of
-        rest ->
-          case words rest of
+      let rest = drop (length "UPDATE DESCRIPTION ") line
+       in case words rest of
             (idStr : _) ->
               case parseId idStr of
                 Nothing -> Nothing
-                Just idVal ->
+                Just taskIdVal ->
                   let afterId = drop (length idStr + 1) rest
                    in case parseQuoted afterId of
-                        Just (newDesc, _) -> Just (UpdateDescCmd idVal newDesc)
+                        Just (newDesc, _) -> Just (UpdateDescCmd taskIdVal newDesc)
                         Nothing -> Nothing
             _ -> Nothing
-------------------------------------------------------------
--- UPDATE PRIORITY <id> <Low|Medium|High>
-------------------------------------------------------------
-parseCommand line
+  -- UPDATE PRIORITY
   | "UPDATE PRIORITY " `isPrefixOf` line =
       let rest = drop (length "UPDATE PRIORITY ") line
-          parts = words rest
-       in case parts of
+          ws = words rest
+       in case ws of
             (idStr : priStr : _) ->
               case (parseId idStr, parsePriority priStr) of
-                (Just idVal, Just p) -> Just (UpdatePriorityCmd idVal p)
+                (Just taskIdVal, Just p) -> Just (UpdatePriorityCmd taskIdVal p)
                 _ -> Nothing
             _ -> Nothing
   -- CLEAR completed
@@ -149,28 +137,28 @@ parseCommand line
   | line == "LIST completed" = Just ListCompletedCmd
   -- LIST pending
   | line == "LIST pending" = Just ListPendingCmd
-  -- Nothing matched
+  -- NONE matched
   | otherwise = Nothing
 
 ------------------------------------------------------------
--- Interpreter: Ekzekutimi i komandave DSL
+-- Interpreter i komandave DSL
 ------------------------------------------------------------
 
 runCommand :: Command -> TaskList -> TaskList
-runCommand (AddCmd id tit desc pri dl) lista =
-  shtoDetyre lista (Task id tit desc pri dl Pending)
-runCommand (DoneCmd id) lista =
-  ndryshoStatusin lista id Completed
-runCommand (DeleteCmd id) lista =
-  hiqDetyre lista id
+runCommand (AddCmd tid tit desc pri dl) lista =
+  shtoDetyre lista (Task tid tit desc pri dl Pending)
+runCommand (DoneCmd tid) lista =
+  ndryshoStatusin lista tid Completed
+runCommand (DeleteCmd tid) lista =
+  hiqDetyre lista tid
 runCommand ReportUrgentCmd lista =
   raportoDetyratUrgjente lista
-runCommand (UpdateTitleCmd id newT) lista =
-  map (\t -> if taskId t == id then t {title = newT} else t) lista
-runCommand (UpdateDescCmd id newD) lista =
-  map (\t -> if taskId t == id then t {description = newD} else t) lista
-runCommand (UpdatePriorityCmd id newP) lista =
-  map (\t -> if taskId t == id then t {priority = newP} else t) lista
+runCommand (UpdateTitleCmd tid newT) lista =
+  map (\t -> if taskId t == tid then t {title = newT} else t) lista
+runCommand (UpdateDescCmd tid newD) lista =
+  map (\t -> if taskId t == tid then t {description = newD} else t) lista
+runCommand (UpdatePriorityCmd tid newP) lista =
+  map (\t -> if taskId t == tid then t {priority = newP} else t) lista
 runCommand ClearCompletedCmd lista =
   filter (\t -> status t /= Completed) lista
 runCommand ListCompletedCmd lista =
@@ -179,21 +167,21 @@ runCommand ListPendingCmd lista =
   filter (\t -> status t == Pending) lista
 
 ------------------------------------------------------------
--- Ekzekutimi i një liste komandash
+-- Ekzekutimi i një liste komandash DSL
 ------------------------------------------------------------
 
 runCommands :: [Command] -> TaskList -> TaskList
-runCommands cmds lista = foldl (flip runCommand) lista cmds
+runCommands cmds lista =
+  foldl (flip runCommand) lista cmds
 
 ------------------------------------------------------------
--- Ekzekuto një file DSL
+-- Ekzekutimi i një file DSL
 ------------------------------------------------------------
 
 runDSLFile :: FilePath -> TaskList -> IO TaskList
 runDSLFile file lista = do
   content <- readFile file
-  let ls = lines content
-  let cmds = [c | Just c <- map parseCommand ls]
+  let cmds = mapMaybe parseCommand (lines content)
   let newList = runCommands cmds lista
-  putStrLn "Komandat DSL u ekzekutuan (version me update)!"
+  putStrLn "Komandat DSL u ekzekutuan!"
   return newList

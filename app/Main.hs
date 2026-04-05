@@ -1,12 +1,11 @@
 module Main where
 
-import Types
-import Persistence
-import CLI.Menu (startMenu)
 import CLI.Colors (colorCyan, colorReset)
+import CLI.Menu (startMenu)
+import Persistence
 
 main :: IO ()
 main = do
-    putStrLn $ colorCyan ++ "Sistemi u startua!\n" ++ colorReset
-    lista <- loadTasks "tasks.db"
-    startMenu lista
+  putStrLn $ colorCyan ++ "Sistemi u startua!\n" ++ colorReset
+  lista <- loadTasks "tasks.db"
+  startMenu lista
