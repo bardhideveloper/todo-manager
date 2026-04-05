@@ -6,11 +6,11 @@ module DSL
   )
 where
 
+import Data.List (isPrefixOf)
 import Reports
 import TaskOperations
 import Types
 import Validation
-import Data.List (isPrefixOf)
 
 ------------------------------------------------------------
 -- ADT: Komandat e DSL

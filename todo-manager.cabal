@@ -17,7 +17,7 @@ common warnings
 
 library
     import:           warnings
-    exposed-modules:  Types TaskOperations Filters Reports Persistence Validation JsonExport DSL
+    exposed-modules:  Types TaskOperations Filters Reports Persistence Validation JsonExport DSL HtmlExport CLI.Colors CLI.PrintTable CLI.Menu CLI.Handlers
     -- other-modules:
     build-depends:    base >=4.18.3.0, directory, aeson, bytestring, text
 
