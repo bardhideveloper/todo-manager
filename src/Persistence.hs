@@ -1,29 +1,25 @@
 module Persistence
-  ( saveTasks
-  , loadTasks
-  ) where
+  ( saveTasks,
+    loadTasks,
+  )
+where
 
+import Data.Aeson (eitherDecode, encode)
+import qualified Data.ByteString.Lazy as BL
 import Types
-import System.Directory (doesFileExist)
-import qualified Data.ByteString as B
-import qualified Data.ByteString.Char8 as BC
 
--- | Save the TaskList strictly to avoid file locks on Windows.
+------------------------------------------------------------
+-- Ruaj TaskList në tasks.db (si JSON)
+------------------------------------------------------------
 saveTasks :: FilePath -> TaskList -> IO ()
-saveTasks file lista = do
-    let content = show lista
-    B.writeFile file (BC.pack content)
-    putStrLn "Detyrat u ruajten me sukses!"
+saveTasks file lista = BL.writeFile file (encode lista)
 
--- | Load TaskList strictly using ByteString to avoid lazy file locking.
+------------------------------------------------------------
+-- Lexo TaskList nga tasks.db (JSON)
+------------------------------------------------------------
 loadTasks :: FilePath -> IO TaskList
 loadTasks file = do
-    exists <- doesFileExist file
-    if not exists
-       then return []
-       else do
-           bytes <- B.readFile file
-           let content = BC.unpack bytes
-           if null content
-               then return []
-               else return (read content :: TaskList)
+  content <- BL.readFile file
+  case eitherDecode content of
+    Left _ -> return [] -- file bosh, invalid, ose mungon
+    Right ts -> return ts
