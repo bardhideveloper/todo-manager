@@ -20,7 +20,7 @@ Ky projekt është realizuar si pjesë e kursit të Programimit Funksional.
 ✅ **Eksportim/Importim JSON**  
 ✅ **Eksportim HTML (hapet në browser)**  
 ✅ **Filtra funksionale (HOF: map/filter/fold)**  
-✅ **Raporte funksionale të kompozuara**  
+✅ **Raporte funksionale të kompozuara dhe statistika**  
 ✅ **Validim i input-it me Maybe**  
 ✅ **Imutabilitet dhe pure functions**  
 ✅ **Error handling i sigurt pa crash**

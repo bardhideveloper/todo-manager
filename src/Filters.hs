@@ -20,7 +20,7 @@ filtroSipasPrioritetit p =
 filtroSipasStatusit :: Status -> TaskList -> TaskList
 filtroSipasStatusit s =
   filter (\t -> status t == s)
-
+  
 -- | Search tasks by keyword.
 kerkoDetyre :: String -> TaskList -> TaskList
 kerkoDetyre keyword =
