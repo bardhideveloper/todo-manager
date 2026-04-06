@@ -63,7 +63,7 @@ taskToHtml t =
     ++ "</td>\n"
     ++ "</tr>\n"
 
--- List of tasks → HTML komplet
+-- List of tasks → HTML complete
 
 taskListToHtml :: TaskList -> String
 taskListToHtml tasks =

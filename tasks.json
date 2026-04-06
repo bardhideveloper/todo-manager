@@ -1,1 +1,82 @@
-[{"deadline":"2026-06-01","description":"Prova","priority":"High","status":"Pending","taskId":3,"title":"TestDetyre"},{"deadline":"2026-09-12","description":"Pershkrim i modifikuar","priority":"Medium","status":"Pending","taskId":1,"title":"Bardh Bablokuuuuuu"},{"deadline":"2026-04-06","description":"Test nga 1","priority":"High","status":"Completed","taskId":2,"title":"Test nga 1"},{"deadline":"2026-04-15","description":"Test per HTML","priority":"Medium","status":"Pending","taskId":5,"title":"Test per HTML"},{"deadline":"2026-04-20","description":"PO QYSH JO","priority":"Medium","status":"Pending","taskId":12,"title":"TA BONA UPDATE VALLA"}]
+[
+  {
+    "taskId": 20,
+    "title": "Prepare presentation",
+    "description": "Create slides for project presentation",
+    "priority": "High",
+    "deadline": "2026-04-12",
+    "status": "Pending"
+  },
+  {
+    "taskId": 21,
+    "title": "Review code",
+    "description": "Check code quality and remove warnings",
+    "priority": "Medium",
+    "deadline": "2026-04-11",
+    "status": "Completed"
+  },
+  {
+    "taskId": 22,
+    "title": "Update README",
+    "description": "Add new features documentation",
+    "priority": "Low",
+    "deadline": null,
+    "status": "Pending"
+  },
+  {
+    "taskId": 23,
+    "title": "Test JSON import",
+    "description": "Verify JSON import functionality",
+    "priority": "High",
+    "deadline": "2026-04-10",
+    "status": "Completed"
+  },
+  {
+    "taskId": 24,
+    "title": "Test statistics",
+    "description": "Validate STATS feature results",
+    "priority": "Medium",
+    "deadline": null,
+    "status": "Pending"
+  },
+  {
+    "taskId": 25,
+    "title": "Clean project files",
+    "description": "Remove unnecessary temporary files",
+    "priority": "Low",
+    "deadline": null,
+    "status": "Pending"
+  },
+  {
+    "taskId": 26,
+    "title": "Finalize report",
+    "description": "Complete academic report review",
+    "priority": "High",
+    "deadline": "2026-04-09",
+    "status": "Completed"
+  },
+  {
+    "taskId": 27,
+    "title": "Practice demo",
+    "description": "Rehearse project demonstration",
+    "priority": "Medium",
+    "deadline": "2026-04-13",
+    "status": "Pending"
+  },
+  {
+    "taskId": 28,
+    "title": "Backup project",
+    "description": "Create final project backup",
+    "priority": "Low",
+    "deadline": "2026-04-14",
+    "status": "Pending"
+  },
+  {
+    "taskId": 29,
+    "title": "Prepare submission",
+    "description": "Zip project and prepare for submission",
+    "priority": "High",
+    "deadline": "2026-04-15",
+    "status": "Pending"
+  }
+]

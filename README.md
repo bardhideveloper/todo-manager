@@ -25,6 +25,7 @@ Ky projekt është realizuar si pjesë e kursit të Programimit Funksional.
 ✅ **Imutabilitet dhe pure functions**  
 ✅ **Error handling i sigurt pa crash**
 ✅ **Complete All Tasks mark all tasks as Completed**
+✅ **Confirmation Prompts**
 
 ---
 

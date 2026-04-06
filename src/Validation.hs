@@ -22,6 +22,7 @@ parsePriority str =
     "Medium" -> Just Medium
     "High" -> Just High
     _ -> Nothing
+
 -- | Parse a status string into a Status ADT.
 parseStatus :: String -> Maybe Status
 parseStatus str =

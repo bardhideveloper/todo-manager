@@ -1,7 +1,6 @@
 module CLI.Handlers
-  ( handleChoice,
-  )
-where
+  ( handleChoice
+  ) where
 
 import CLI.Colors
 import CLI.PrintTable
@@ -27,24 +26,54 @@ prompt text = do
   getLine
 
 ------------------------------------------------------------
+-- CONFIRMATION HELPER
+------------------------------------------------------------
+
+confirm :: String -> IO Bool
+confirm msg = do
+  putStr (msg ++ " (yes/no): ")
+  hFlush stdout
+  ans <- getLine
+  return (ans == "yes")
+
+------------------------------------------------------------
 -- HANDLE CHOICE
 ------------------------------------------------------------
 
 handleChoice :: String -> TaskList -> IO TaskList
+
+-- ADD TASK
 handleChoice "1" lista = cliShtoDetyre lista
+
+-- DELETE TASK (WITH CONFIRMATION)
 handleChoice "2" lista = cliHiq lista
+
+-- CHANGE STATUS
 handleChoice "3" lista = cliNdrysho lista
-handleChoice "4" lista = printList lista >> return lista
+
+-- SHOW ALL TASKS
+handleChoice "4" lista = do
+  printList lista
+  return lista
+
+-- FILTERS
 handleChoice "5" lista = cliFiltra lista >> return lista
+
+-- REPORTS
 handleChoice "6" lista = cliRaporte lista >> return lista
+
+------------------------------------------------------------
+-- IMPORT / EXPORT
+------------------------------------------------------------
+
 -- JSON EXPORT
 handleChoice "7" lista = do
-  exportToJson "tasks.json" lista
+  exportToJson "tasks_export.json" lista
   putStrLn $ colorGreen ++ "Detyrat u eksportuan ne JSON!" ++ colorReset
   return lista
 
--- JSON IMPORT
-handleChoice "8" lista = do
+-- JSON IMPORT (lista e vjeter nuk perdoret)
+handleChoice "8" _ = do
   lista' <- importFromJson "tasks.json"
   putStrLn $ colorGreen ++ "JSON u importua me sukses!" ++ colorReset
   return lista'
@@ -52,10 +81,13 @@ handleChoice "8" lista = do
 -- HTML EXPORT
 handleChoice "9" lista = do
   exportHtml "tasks.html" lista
-  putStrLn $ colorGreen ++ "Detyrat u eksportuan ne tasks.html!" ++ colorReset
+  putStrLn $ colorGreen ++ "Detyrat u eksportuan ne HTML!" ++ colorReset
   return lista
 
--- DSL EXECUTION
+------------------------------------------------------------
+-- DSL
+------------------------------------------------------------
+
 handleChoice "10" lista = do
   file <- prompt "Shkruaj emrin e file DSL:"
   lista' <- runDSLFile file lista
@@ -63,7 +95,10 @@ handleChoice "10" lista = do
   printList lista'
   return lista'
 
--- STATS
+------------------------------------------------------------
+-- STATISTICS
+------------------------------------------------------------
+
 handleChoice "11" lista = do
   let s = computeStats lista
   putStrLn $ colorBlue ++ "\n--- STATISTIKA ---\n" ++ colorReset
@@ -77,34 +112,51 @@ handleChoice "11" lista = do
   putStrLn $ "Me afat:                 " ++ show (withDeadline s)
   return lista
 
--- MARK ALL AS COMPLETED
-handleChoice "12" lista = do
-  let lista' = completeAll lista
-  putStrLn $ colorGreen ++ "Te gjitha detyrat u shenuan si Completed!" ++ colorReset
-  return lista'
+------------------------------------------------------------
+-- EXTRA OPERATIONS
+------------------------------------------------------------
 
--- CLEAR ALL TASKS
+-- MARK ALL AS COMPLETED (WITH CONFIRMATION)
+handleChoice "12" lista = do
+  ok <- confirm "A je i sigurt qe do i perfundosh te gjitha detyrat?"
+  if ok
+    then do
+      putStrLn $ colorGreen ++ "Te gjitha detyrat u shenuan si Completed!" ++ colorReset
+      return (completeAll lista)
+    else do
+      putStrLn $ colorBlue ++ "Operacioni u anulua." ++ colorReset
+      return lista
+
+-- CLEAR ALL TASKS (WITH CONFIRMATION)
 handleChoice "13" lista = do
-  let lista' = clearAll lista
-  putStrLn $ colorYellow ++ "Te gjitha detyrat u fshine!" ++ colorReset
-  return lista'
-  
+  ok <- confirm "A je i sigurt qe do fshish te gjitha detyrat?"
+  if ok
+    then do
+      putStrLn $ colorYellow ++ "Te gjitha detyrat u fshine!" ++ colorReset
+      return (clearAll lista)
+    else do
+      putStrLn $ colorBlue ++ "Operacioni u anulua." ++ colorReset
+      return lista
+
+------------------------------------------------------------
 -- DEFAULT
+------------------------------------------------------------
+
 handleChoice _ lista = do
   putStrLn $ colorRed ++ "Zgjedhje e pasakte! Ju lutem provoni perseri." ++ colorReset
   return lista
 
 ------------------------------------------------------------
--- KODI I KOMANDAVE TE CLI
+-- CLI COMMAND IMPLEMENTATIONS
 ------------------------------------------------------------
 
 cliShtoDetyre :: TaskList -> IO TaskList
 cliShtoDetyre lista = do
   idStr <- prompt "ID:"
-  tit <- prompt "Titulli:"
-  desc <- prompt "Pershkrimi:"
+  tit   <- prompt "Titulli:"
+  desc  <- prompt "Pershkrimi:"
   prStr <- prompt "Prioriteti (Low/Medium/High):"
-  dl <- prompt "Afati (ose Enter per asnje):"
+  dl    <- prompt "Afati (ose Enter per asnje):"
 
   let maybeId = parseId idStr
   let maybePr = parsePriority prStr
@@ -127,13 +179,19 @@ cliHiq lista = do
       putStrLn $ colorRed ++ "ID e pasakte!" ++ colorReset
       return lista
     Just idVal -> do
-      putStrLn $ colorYellow ++ "Detyra u hoq (nese ekzistonte)." ++ colorReset
-      return (hiqDetyre lista idVal)
+      ok <- confirm "A je i sigurt qe do e heqesh kete detyre?"
+      if ok
+        then do
+          putStrLn $ colorYellow ++ "Detyra u hoq!" ++ colorReset
+          return (hiqDetyre lista idVal)
+        else do
+          putStrLn $ colorBlue ++ "Operacioni u anulua." ++ colorReset
+          return lista
 
 cliNdrysho :: TaskList -> IO TaskList
 cliNdrysho lista = do
   idStr <- prompt "ID e detyres:"
-  sStr <- prompt "Status (Pending/Completed):"
+  sStr  <- prompt "Status (Pending/Completed):"
 
   case (parseId idStr, parseStatus sStr) of
     (Just idVal, Just statusVal) -> do
@@ -142,6 +200,10 @@ cliNdrysho lista = do
     _ -> do
       putStrLn $ colorRed ++ "Gabim ne input!" ++ colorReset
       return lista
+
+------------------------------------------------------------
+-- FILTERS
+------------------------------------------------------------
 
 cliFiltra :: TaskList -> IO ()
 cliFiltra lista = do
@@ -170,7 +232,11 @@ cliFiltra lista = do
       printList (kerkoDetyre w lista)
     "4" -> printList (renditSipasPrioritetit lista)
     "0" -> return ()
-    _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
+    _   -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
+
+------------------------------------------------------------
+-- REPORTS
+------------------------------------------------------------
 
 cliRaporte :: TaskList -> IO ()
 cliRaporte lista = do
@@ -187,4 +253,4 @@ cliRaporte lista = do
     "2" -> printList (raportoDetyratPaAfat lista)
     "3" -> printList (raportoDetyratMeDeadline lista)
     "0" -> return ()
-    _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
+    _   -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset

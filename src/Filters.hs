@@ -8,7 +8,7 @@ module Filters
 where
 
 import Data.List (sortOn)
-import Data.Ord (Down(..))
+import Data.Ord (Down (..))
 import Types
 
 -- | Return only tasks with the given priority.
@@ -20,17 +20,17 @@ filtroSipasPrioritetit p =
 filtroSipasStatusit :: Status -> TaskList -> TaskList
 filtroSipasStatusit s =
   filter (\t -> status t == s)
-  
+
 -- | Search tasks by keyword.
 kerkoDetyre :: String -> TaskList -> TaskList
 kerkoDetyre keyword =
   filter
-    (\t ->
+    ( \t ->
         let txt = title t ++ " " ++ description t
          in keyword `elem` words txt
     )
 
--- ✅ | Sort tasks by priority (High → Low) using Down
+-- | Sort tasks by priority (High → Low) using Down
 renditSipasPrioritetit :: TaskList -> TaskList
 renditSipasPrioritetit =
   sortOn (Down . priority)
