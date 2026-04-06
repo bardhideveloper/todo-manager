@@ -3,13 +3,16 @@ module Filters
     filtroSipasStatusit,
     kerkoDetyre,
     renditSipasPrioritetit,
-    kompozoFiltra,
+    kompozoFiltra
   )
 where
 
-import Data.List (sortOn)
+import Data.List (sortOn, isInfixOf)
 import Data.Ord (Down (..))
+import Data.Char (toLower)
 import Types
+
+-- FILTERS
 
 -- | Return only tasks with the given priority.
 filtroSipasPrioritetit :: Priority -> TaskList -> TaskList
@@ -21,21 +24,29 @@ filtroSipasStatusit :: Status -> TaskList -> TaskList
 filtroSipasStatusit s =
   filter (\t -> status t == s)
 
--- | Search tasks by keyword.
+-- SEARCH (FIXED VERSION)
+
+-- | Search tasks by keyword (case-insensitive, substring search)
+--   Searches in title and description.
 kerkoDetyre :: String -> TaskList -> TaskList
 kerkoDetyre keyword =
   filter
-    ( \t ->
-        let txt = title t ++ " " ++ description t
-         in keyword `elem` words txt
+    (\t ->
+      let kw  = map toLower keyword
+          txt = map toLower (title t ++ " " ++ description t)
+      in kw `isInfixOf` txt
     )
 
--- | Sort tasks by priority (High → Low) using Down
+-- SORTING
+
+-- | Sort tasks by priority (High → Low)
 renditSipasPrioritetit :: TaskList -> TaskList
 renditSipasPrioritetit =
   sortOn (Down . priority)
 
--- | Compose multiple filters
+-- COMPOSITION
+
+-- | Compose multiple filters into a single pipeline
 kompozoFiltra :: [TaskList -> TaskList] -> TaskList -> TaskList
 kompozoFiltra funs lista =
   foldl (\acc f -> f acc) lista funs
