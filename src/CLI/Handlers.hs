@@ -1,6 +1,7 @@
 module CLI.Handlers
-  ( handleChoice
-  ) where
+  ( handleChoice,
+  )
+where
 
 import CLI.Colors
 import CLI.PrintTable
@@ -41,16 +42,12 @@ confirm msg = do
 ------------------------------------------------------------
 
 handleChoice :: String -> TaskList -> IO TaskList
-
 -- ADD TASK
 handleChoice "1" lista = cliShtoDetyre lista
-
 -- DELETE TASK (WITH CONFIRMATION)
 handleChoice "2" lista = cliHiq lista
-
 -- CHANGE STATUS
 handleChoice "3" lista = cliNdrysho lista
-
 -- SHOW ALL TASKS
 handleChoice "4" lista = do
   printList lista
@@ -58,10 +55,8 @@ handleChoice "4" lista = do
 
 -- FILTERS
 handleChoice "5" lista = cliFiltra lista >> return lista
-
 -- REPORTS
 handleChoice "6" lista = cliRaporte lista >> return lista
-
 ------------------------------------------------------------
 -- IMPORT / EXPORT
 ------------------------------------------------------------
@@ -153,10 +148,10 @@ handleChoice _ lista = do
 cliShtoDetyre :: TaskList -> IO TaskList
 cliShtoDetyre lista = do
   idStr <- prompt "ID:"
-  tit   <- prompt "Titulli:"
-  desc  <- prompt "Pershkrimi:"
+  tit <- prompt "Titulli:"
+  desc <- prompt "Pershkrimi:"
   prStr <- prompt "Prioriteti (Low/Medium/High):"
-  dl    <- prompt "Afati (ose Enter per asnje):"
+  dl <- prompt "Afati (ose Enter per asnje):"
 
   let maybeId = parseId idStr
   let maybePr = parsePriority prStr
@@ -191,7 +186,7 @@ cliHiq lista = do
 cliNdrysho :: TaskList -> IO TaskList
 cliNdrysho lista = do
   idStr <- prompt "ID e detyres:"
-  sStr  <- prompt "Status (Pending/Completed):"
+  sStr <- prompt "Status (Pending/Completed):"
 
   case (parseId idStr, parseStatus sStr) of
     (Just idVal, Just statusVal) -> do
@@ -232,7 +227,7 @@ cliFiltra lista = do
       printList (kerkoDetyre w lista)
     "4" -> printList (renditSipasPrioritetit lista)
     "0" -> return ()
-    _   -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
+    _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
 
 ------------------------------------------------------------
 -- REPORTS
@@ -253,4 +248,4 @@ cliRaporte lista = do
     "2" -> printList (raportoDetyratPaAfat lista)
     "3" -> printList (raportoDetyratMeDeadline lista)
     "0" -> return ()
-    _   -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
+    _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
