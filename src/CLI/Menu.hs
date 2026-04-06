@@ -31,6 +31,9 @@ startMenu lista = do
     putStrLn $ colorBlue ++ "\n------------------ DSL ------------------" ++ colorReset
     putStrLn "  [10] -> Ekzekuto DSL"
 
+    putStrLn $ colorBlue ++ "\n----------------- STATISTIKA -----------------" ++ colorReset
+    putStrLn "  [11] -> Shfaq Statistikat"
+
     putStrLn $ colorRed ++ "\n  [0] -> Dil nga programi\n" ++ colorReset
 
     putStr "Zgjedhja: "

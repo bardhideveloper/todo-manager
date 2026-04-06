@@ -6,20 +6,26 @@ where
 
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Lazy as BL
+import System.Directory (doesFileExist)
 import Types
 
 ------------------------------------------------------------
--- Ruaj TaskList në tasks.db (si JSON)
+-- Save tasks strictly (NO locking)
 ------------------------------------------------------------
 saveTasks :: FilePath -> TaskList -> IO ()
-saveTasks file lista = BL.writeFile file (encode lista)
+saveTasks file lista =
+  BL.writeFile file (encode lista) -- strict write
 
 ------------------------------------------------------------
--- Lexo TaskList nga tasks.db (JSON)
+-- Load tasks strictly (NO lazy readFile)
 ------------------------------------------------------------
 loadTasks :: FilePath -> IO TaskList
 loadTasks file = do
-  content <- BL.readFile file
-  case eitherDecode content of
-    Left _ -> return [] -- file bosh, invalid, ose mungon
-    Right ts -> return ts
+  fileExists <- doesFileExist file
+  if not fileExists
+    then return []
+    else do
+      content <- BL.readFile file -- STRICT read
+      case eitherDecode content of
+        Left _ -> return [] -- invalid/broken file
+        Right t -> return t
