@@ -4,30 +4,48 @@ module TaskOperations
   ( shtoDetyre,
     hiqDetyre,
     ndryshoStatusin,
+    completeAll,
+    clearAll
   )
 where
 
 import Types
 
--- | Add a new task to the end of a task list.
--- Pure function: does not modify the original list.
+------------------------------------------------------------
+-- 1. SHTO DETYRË
+------------------------------------------------------------
 shtoDetyre :: TaskList -> Task -> TaskList
 shtoDetyre lista detyra = lista ++ [detyra]
 
--- | Remove a task from the list by its ID.
--- If no task with the given ID exists, the list is returned unchanged.
+------------------------------------------------------------
+-- 2. HIQ DETYRË
+------------------------------------------------------------
 hiqDetyre :: TaskList -> Int -> TaskList
 hiqDetyre lista taskIdToRemove =
   filter (\t -> taskId t /= taskIdToRemove) lista
 
--- | Update the status of a specific task by ID.
--- If no matching task exists, the list is returned unchanged.
+------------------------------------------------------------
+-- 3. NDRYSHO STATUSIN
+------------------------------------------------------------
 ndryshoStatusin :: TaskList -> Int -> Status -> TaskList
 ndryshoStatusin lista taskIdToUpdate statusRi =
   map
-    ( \t ->
+    (\t ->
         if taskId t == taskIdToUpdate
-          then t {status = statusRi}
+          then t { status = statusRi }
           else t
     )
     lista
+
+------------------------------------------------------------
+-- 4. COMPLETE ALL TASKS (NEW FEATURE)
+------------------------------------------------------------
+completeAll :: TaskList -> TaskList
+completeAll =
+  map (\t -> t { status = Completed })
+
+------------------------------------------------------------
+-- 5. CLEAR ALL TASKS (NEW FEATURE)
+------------------------------------------------------------
+clearAll :: TaskList -> TaskList
+clearAll _ = []

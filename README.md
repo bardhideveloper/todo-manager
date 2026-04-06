@@ -24,6 +24,7 @@ Ky projekt është realizuar si pjesë e kursit të Programimit Funksional.
 ✅ **Validim i input-it me Maybe**  
 ✅ **Imutabilitet dhe pure functions**  
 ✅ **Error handling i sigurt pa crash**
+✅ **Complete All Tasks mark all tasks as Completed**
 
 ---
 

@@ -1,5 +1,5 @@
 module CLI.Handlers
-  ( handleChoice
+  ( handleChoice,
   )
 where
 
@@ -37,7 +37,6 @@ handleChoice "3" lista = cliNdrysho lista
 handleChoice "4" lista = printList lista >> return lista
 handleChoice "5" lista = cliFiltra lista >> return lista
 handleChoice "6" lista = cliRaporte lista >> return lista
-
 -- JSON EXPORT
 handleChoice "7" lista = do
   exportToJson "tasks.json" lista
@@ -78,6 +77,18 @@ handleChoice "11" lista = do
   putStrLn $ "Me afat:                 " ++ show (withDeadline s)
   return lista
 
+-- MARK ALL AS COMPLETED
+handleChoice "12" lista = do
+  let lista' = completeAll lista
+  putStrLn $ colorGreen ++ "Te gjitha detyrat u shenuan si Completed!" ++ colorReset
+  return lista'
+
+-- CLEAR ALL TASKS
+handleChoice "13" lista = do
+  let lista' = clearAll lista
+  putStrLn $ colorYellow ++ "Te gjitha detyrat u fshine!" ++ colorReset
+  return lista'
+  
 -- DEFAULT
 handleChoice _ lista = do
   putStrLn $ colorRed ++ "Zgjedhje e pasakte! Ju lutem provoni perseri." ++ colorReset
@@ -90,10 +101,10 @@ handleChoice _ lista = do
 cliShtoDetyre :: TaskList -> IO TaskList
 cliShtoDetyre lista = do
   idStr <- prompt "ID:"
-  tit   <- prompt "Titulli:"
-  desc  <- prompt "Pershkrimi:"
+  tit <- prompt "Titulli:"
+  desc <- prompt "Pershkrimi:"
   prStr <- prompt "Prioriteti (Low/Medium/High):"
-  dl    <- prompt "Afati (ose Enter per asnje):"
+  dl <- prompt "Afati (ose Enter per asnje):"
 
   let maybeId = parseId idStr
   let maybePr = parsePriority prStr
@@ -122,7 +133,7 @@ cliHiq lista = do
 cliNdrysho :: TaskList -> IO TaskList
 cliNdrysho lista = do
   idStr <- prompt "ID e detyres:"
-  sStr  <- prompt "Status (Pending/Completed):"
+  sStr <- prompt "Status (Pending/Completed):"
 
   case (parseId idStr, parseStatus sStr) of
     (Just idVal, Just statusVal) -> do
@@ -149,21 +160,16 @@ cliFiltra lista = do
       case parsePriority p of
         Just pv -> printList (filtroSipasPrioritetit pv lista)
         Nothing -> putStrLn $ colorRed ++ "Prioritet i pasakte!" ++ colorReset
-
     "2" -> do
       s <- prompt "Statusi:"
       case parseStatus s of
         Just sv -> printList (filtroSipasStatusit sv lista)
         Nothing -> putStrLn $ colorRed ++ "Status i pasakte!" ++ colorReset
-
     "3" -> do
       w <- prompt "Fjala per kerkimin:"
       printList (kerkoDetyre w lista)
-
     "4" -> printList (renditSipasPrioritetit lista)
-
     "0" -> return ()
-
     _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
 
 cliRaporte :: TaskList -> IO ()
@@ -181,4 +187,4 @@ cliRaporte lista = do
     "2" -> printList (raportoDetyratPaAfat lista)
     "3" -> printList (raportoDetyratMeDeadline lista)
     "0" -> return ()
-    _   -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
+    _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
