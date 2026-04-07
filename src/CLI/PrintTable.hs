@@ -7,9 +7,7 @@ where
 import CLI.Colors (colorCyan)
 import Types
 
-------------------------------------------------------------
 -- HELPERS
-------------------------------------------------------------
 
 pad :: Int -> String -> String
 pad n s =
@@ -24,9 +22,7 @@ wrap n s =
   let (l, r) = splitAt n s
    in l : wrap n r
 
-------------------------------------------------------------
 -- PRINT SINGLE TASK (MULTILINE)
-------------------------------------------------------------
 
 printTask :: Task -> IO ()
 printTask t = do
@@ -55,9 +51,7 @@ printTask t = do
     )
     [0 .. maxLines - 1]
 
-------------------------------------------------------------
 -- PRINT LIST WITH HEADER
-------------------------------------------------------------
 
 printList :: TaskList -> IO ()
 printList lista = do

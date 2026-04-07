@@ -11,22 +11,16 @@ where
 
 import Types
 
-------------------------------------------------------------
--- 1. ADD TASK
-------------------------------------------------------------
+-- ADD TASK
 shtoDetyre :: TaskList -> Task -> TaskList
 shtoDetyre lista detyra = lista ++ [detyra]
 
-------------------------------------------------------------
--- 2. REMOVE TASK
-------------------------------------------------------------
+-- REMOVE TASK
 hiqDetyre :: TaskList -> Int -> TaskList
 hiqDetyre lista taskIdToRemove =
   filter (\t -> taskId t /= taskIdToRemove) lista
 
-------------------------------------------------------------
--- 3. UPDATE STATUS
-------------------------------------------------------------
+-- UPDATE STATUS
 ndryshoStatusin :: TaskList -> Int -> Status -> TaskList
 ndryshoStatusin lista taskIdToUpdate statusRi =
   map
@@ -37,15 +31,11 @@ ndryshoStatusin lista taskIdToUpdate statusRi =
     )
     lista
 
-------------------------------------------------------------
--- 4. COMPLETE ALL TASKS
-------------------------------------------------------------
+-- COMPLETE ALL TASKS
 completeAll :: TaskList -> TaskList
 completeAll =
   map (\t -> t {status = Completed})
 
-------------------------------------------------------------
--- 5. CLEAR ALL TASKS
-------------------------------------------------------------
+-- CLEAR ALL TASKS
 clearAll :: TaskList -> TaskList
 clearAll _ = []

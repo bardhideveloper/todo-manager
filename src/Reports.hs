@@ -13,9 +13,8 @@ import Data.Maybe (isJust, isNothing)
 import Filters
 import Types
 
-------------------------------------------------------------
--- RAPORTE
-------------------------------------------------------------
+
+-- REPORTS
 
 -- | Tasks that are High priority AND still Pending.
 raportoDetyratUrgjente :: TaskList -> TaskList

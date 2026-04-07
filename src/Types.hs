@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 
--- | Core data types for the To‑Do Manager system.
+-- Core data types for the To‑Do Manager system.
 module Types
   ( Priority (..),
     Status (..),

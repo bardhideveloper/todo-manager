@@ -15,10 +15,7 @@ import TaskOperations
 import Types
 import Validation
 
-------------------------------------------------------------
 -- INPUT HELPER
-------------------------------------------------------------
-
 prompt :: String -> IO String
 prompt text = do
   putStr text
@@ -26,10 +23,7 @@ prompt text = do
   hFlush stdout
   getLine
 
-------------------------------------------------------------
 -- CONFIRMATION HELPER
-------------------------------------------------------------
-
 confirm :: String -> IO Bool
 confirm msg = do
   putStr (msg ++ " (yes/no): ")
@@ -37,10 +31,7 @@ confirm msg = do
   ans <- getLine
   return (ans == "yes")
 
-------------------------------------------------------------
 -- HANDLE CHOICE
-------------------------------------------------------------
-
 handleChoice :: String -> TaskList -> IO TaskList
 -- ADD TASK
 handleChoice "1" lista = cliShtoDetyre lista
@@ -57,10 +48,8 @@ handleChoice "4" lista = do
 handleChoice "5" lista = cliFiltra lista >> return lista
 -- REPORTS
 handleChoice "6" lista = cliRaporte lista >> return lista
-------------------------------------------------------------
--- IMPORT / EXPORT
-------------------------------------------------------------
 
+-- IMPORT / EXPORT
 -- JSON EXPORT
 handleChoice "7" lista = do
   exportToJson "tasks_export.json" lista
@@ -79,9 +68,7 @@ handleChoice "9" lista = do
   putStrLn $ colorGreen ++ "Detyrat u eksportuan ne HTML!" ++ colorReset
   return lista
 
-------------------------------------------------------------
 -- DSL
-------------------------------------------------------------
 
 handleChoice "10" lista = do
   file <- prompt "Shkruaj emrin e file DSL:"
@@ -90,9 +77,7 @@ handleChoice "10" lista = do
   printList lista'
   return lista'
 
-------------------------------------------------------------
 -- STATISTICS
-------------------------------------------------------------
 
 handleChoice "11" lista = do
   let s = computeStats lista
@@ -107,10 +92,7 @@ handleChoice "11" lista = do
   putStrLn $ "Me afat:                 " ++ show (withDeadline s)
   return lista
 
-------------------------------------------------------------
 -- EXTRA OPERATIONS
-------------------------------------------------------------
-
 -- MARK ALL AS COMPLETED (WITH CONFIRMATION)
 handleChoice "12" lista = do
   ok <- confirm "A je i sigurt qe do i perfundosh te gjitha detyrat?"
@@ -133,17 +115,13 @@ handleChoice "13" lista = do
       putStrLn $ colorBlue ++ "Operacioni u anulua." ++ colorReset
       return lista
 
-------------------------------------------------------------
 -- DEFAULT
-------------------------------------------------------------
 
 handleChoice _ lista = do
-  putStrLn $ colorRed ++ "Zgjedhje e pasakte! Ju lutem provoni perseri." ++ colorReset
+  putStrLn $ colorRed ++ "Zgjedhje e pasakte! Nuk." ++ colorReset
   return lista
 
-------------------------------------------------------------
 -- CLI COMMAND IMPLEMENTATIONS
-------------------------------------------------------------
 
 cliShtoDetyre :: TaskList -> IO TaskList
 cliShtoDetyre lista = do
@@ -196,9 +174,7 @@ cliNdrysho lista = do
       putStrLn $ colorRed ++ "Gabim ne input!" ++ colorReset
       return lista
 
-------------------------------------------------------------
 -- FILTERS
-------------------------------------------------------------
 
 cliFiltra :: TaskList -> IO ()
 cliFiltra lista = do
@@ -229,9 +205,7 @@ cliFiltra lista = do
     "0" -> return ()
     _ -> putStrLn $ colorRed ++ "Zgjedhje e pasakte!" ++ colorReset
 
-------------------------------------------------------------
 -- REPORTS
-------------------------------------------------------------
 
 cliRaporte :: TaskList -> IO ()
 cliRaporte lista = do
